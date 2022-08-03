@@ -13,25 +13,26 @@ import java.util.Set;
  */
 public enum CardType {
     AMERICAN_EXPRESS( prefixesFromRange(new Range(34, 34), new Range(37, 37)),
-            list(15) ),
+            list(15), 4 ),
 
     VISA( prefixesFromRange(new Range(4, 4)),
-            list(13, 16, 19) ),
+            list(13, 16, 19), 3 ),
 
     MASTERCARD( prefixesFromRange(new Range(51, 55), new Range(2221, 2720)),
-            list(16) ),
+            list(16), 3 ),
 
     DISCOVER( prefixesFromRange(new Range(65, 65), new Range(644, 649), new Range(6011, 6011), new Range(622126, 622925) ),
-            list(16, 19) );
+            list(16, 19), 3);
 
 
     private Set<Long> prefixes;
     private List<Integer> lengths;
+    private int cvvLen;
 
-
-    private CardType( final Set<Long> prefixes, final List<Integer> lengths ) {
+    private CardType( final Set<Long> prefixes, final List<Integer> lengths, int cvvLen ) {
         this.prefixes = prefixes;
         this.lengths = lengths;
+        this.cvvLen = cvvLen;
     }
 
     public Set<Long> getPrefixes() {
@@ -73,6 +74,10 @@ public enum CardType {
         }
 
         return Collections.unmodifiableList( set );
+    }
+
+    public int getCvvLen(){
+        return this.cvvLen;
     }
 }
 

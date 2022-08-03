@@ -3,6 +3,7 @@ import com.example.paymentcardgeneratorserver.Interfaces.PaymentCardGenerator;
 import com.example.paymentcardgeneratorserver.Enums.CardType;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
 import java.util.*;
 /**
  * <p>
@@ -34,12 +35,35 @@ import java.util.*;
  */
 
 @Service
-public class PaymentCardGeneratorImplementation implements PaymentCardGenerator {
+public class PaymentCardImpl implements PaymentCardGenerator {
+
+    static class Card {
+        String cardNo;
+        String cvv;
+        String name;
+        String address;
+
+        public Card(String cardNo, String name, String address, String cvv){
+            this.cardNo = cardNo;
+            this.name = name;
+            this.address = address;
+            this.cvv = cvv;
+        }
+
+        @Override
+        public String toString() {
+            return "Card{" +
+                    "cardNo='" + cardNo + '\'' +
+                    ", cvv='" + cvv + '\'' +
+                    ", name='" + name + '\'' +
+                    ", address='" + address + '\'' +
+                    '}';
+        }
+    }
 
     @Override
     public String generateByCardType(final CardType cardType) {
         if (cardType == null) throw new IllegalArgumentException("Card type is null");
-
         return generateCardNumber(cardType);
     }
 
@@ -206,5 +230,46 @@ public class PaymentCardGeneratorImplementation implements PaymentCardGenerator 
         }
 
         return item;
+    }
+
+    private String generateCvv(CardType c) {
+        int len = c.getCvvLen();
+        String cvv = "";
+        while(cvv.length() < len) {
+            cvv += (int)Math.floor(Math.random() * 10);
+        }
+       return cvv;
+    }
+
+    private List<String> readFromFile(String path) throws FileNotFoundException, IOException {
+        List<String> l = new ArrayList<>();
+        File f = new File(path);
+        BufferedReader br = new BufferedReader(new FileReader(f));
+        while(br.readLine() !=  null) {
+            l.add(br.readLine());
+        }
+        return l;
+    }
+    private String getName(String path) throws IOException{
+        List<String> l = readFromFile(path);
+        Random r = new Random();
+        return l.get(r.nextInt(l.size()));
+    }
+
+    private String getAddress(String path) throws IOException{
+        List<String> l = readFromFile(path);
+        Random r = new Random();
+        return l.get(r.nextInt(l.size()));
+    }
+
+    public String generateCard(CardType name) throws Exception{
+        String path = "src/main/java/com/example/paymentcardgeneratorserver/Files/";
+        Card card = new Card(
+                generateByCardType(name),
+                getName(path + "Names"),
+                getAddress(path + "Addresses"),
+                generateCvv(name)
+        );
+        return card.toString();
     }
 }

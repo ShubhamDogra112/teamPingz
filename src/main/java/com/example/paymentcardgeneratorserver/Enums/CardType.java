@@ -16,8 +16,9 @@ public enum CardType {
             list(15), 4 ),
 
     VISA( prefixesFromRange(new Range(4, 4)),
-            list(13, 16, 19), 3 ),
+            list(16, 19), 3 ),
 
+    RUPAY(prefixesFromRange(new Range(60, 60)), list(16), 3),
     MASTERCARD( prefixesFromRange(new Range(51, 55), new Range(2221, 2720)),
             list(16), 3 ),
 

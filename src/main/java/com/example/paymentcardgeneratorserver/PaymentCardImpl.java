@@ -2,7 +2,7 @@ package com.example.paymentcardgeneratorserver;
 import com.example.paymentcardgeneratorserver.Interfaces.PaymentCardGenerator;
 import com.example.paymentcardgeneratorserver.Enums.CardType;
 import org.springframework.stereotype.Service;
-
+import com.example.paymentcardgeneratorserver.Types.Card;
 import java.io.*;
 import java.util.*;
 /**
@@ -36,31 +36,6 @@ import java.util.*;
 
 @Service
 public class PaymentCardImpl implements PaymentCardGenerator {
-
-    static class Card {
-        String cardNo;
-        String cvv;
-        String name;
-        String address;
-
-        public Card(String cardNo, String name, String address, String cvv){
-            this.cardNo = cardNo;
-            this.name = name;
-            this.address = address;
-            this.cvv = cvv;
-        }
-
-        @Override
-        public String toString() {
-            return "Card{" +
-                    "cardNo='" + cardNo + '\'' +
-                    ", cvv='" + cvv + '\'' +
-                    ", name='" + name + '\'' +
-                    ", address='" + address + '\'' +
-                    '}';
-        }
-    }
-
     @Override
     public String generateByCardType(final CardType cardType) {
         if (cardType == null) throw new IllegalArgumentException("Card type is null");
@@ -68,14 +43,14 @@ public class PaymentCardImpl implements PaymentCardGenerator {
     }
 
     @Override
-    public List<String> generateListByCardType(final int howMany, final CardType cardType) {
+    public  List<Card> generateListByCardType(final int howMany, final CardType cardType) throws Exception{
         if (howMany <= 0) throw new IllegalArgumentException("How many must be greater than zero");
         if (cardType == null) throw new IllegalArgumentException("Card type is null");
 
-        final List<String> cardNums = new ArrayList<>(howMany);
+        final List<Card> cardNums = new ArrayList<>(howMany);
 
         for (int i = 0; i < howMany; i++) {
-            cardNums.add(generateCardNumber(cardType));
+            cardNums.add(generateCard(cardType));
         }
 
         return cardNums;
@@ -90,9 +65,9 @@ public class PaymentCardImpl implements PaymentCardGenerator {
         final Set<CardType> condensedCardTypes = removeVarargDuplicates(cardTypes);
         final Map<CardType, List<String>> cardNums = new HashMap<>(cardTypes.length);
 
-        for (final CardType cardType : condensedCardTypes) {
-            cardNums.put(cardType, generateListByCardType(howManyOfEach, cardType));
-        }
+//        for (final CardType cardType : condensedCardTypes) {
+//            cardNums.put(cardType, generateListByCardType(howManyOfEach, cardType));
+//        }
 
         return cardNums;
     }
@@ -262,7 +237,7 @@ public class PaymentCardImpl implements PaymentCardGenerator {
         return l.get(r.nextInt(l.size()));
     }
 
-    public String generateCard(CardType name) throws Exception{
+    public Card generateCard(CardType name) throws Exception{
         String path = "src/main/java/com/example/paymentcardgeneratorserver/Files/";
         Card card = new Card(
                 generateByCardType(name),
@@ -270,6 +245,6 @@ public class PaymentCardImpl implements PaymentCardGenerator {
                 getAddress(path + "Addresses"),
                 generateCvv(name)
         );
-        return card.toString();
+        return card;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.paymentcardgeneratorserver.Interfaces;
 import com.example.paymentcardgeneratorserver.Enums.CardType;
+import com.example.paymentcardgeneratorserver.Types.Card;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +28,7 @@ public interface PaymentCardGenerator {
      *
      * @return A list of card numbers for the specified card type
      */
-    public List<String> generateListByCardType( int howMany, CardType cardType );
+    public List<Card> generateListByCardType(int howMany, CardType cardType ) throws Exception;
 
     /**
      * Generates card numbers of given card types.  The prefix and length are
